@@ -1,4 +1,4 @@
-<script src="<?php echo base_url(); ?>js/grid_content.js" type="text/javascript"></script>
+
 <style>
 	.sbtn {
 		background: #0c74bfeb !important; /*2393e3eb*/
@@ -60,7 +60,9 @@
 									if($row['unit_id'] == $user_data->unit_name){
 									$select_data="selected";
 									}else{
-										continue;
+										if ($user_data->level != "All") {
+											continue;
+										}
 									}
 									echo '<option '.$select_data.'  value="'.$row['unit_id'].'">'.$row['unit_name'].
 									'</option>';
@@ -137,6 +139,9 @@
 						<li><a href="#monthly" data-toggle="tab">Monthly Reports</a></li>
 						<li><a href="#continuous" data-toggle="tab">Continuous Reports</a></li>
 						<li><a href="#other" data-toggle="tab">Other Reports</a></li>
+						<?php if($_SESSION['data']->unit_name == 4){?>
+						<li><a href="#roster" data-toggle="tab">Roster Employee List</a></li>
+						<?php }?>
 					</ul>
 					<div class="tab-content">
 						<?php
@@ -251,7 +256,10 @@
 							<button class="btn input-sm sbtn" onclick="grid_continuous_prom_report()">Promotion Report</button>
 							<?php } ?>
 							<?php if(in_array(44,$acl)) { ?>
-							<button class="btn input-sm sbtn" onclick="grid_continuous_line_report()">Line Change Report</button>
+							<button class="btn input-sm sbtn" onclick="grid_continuous_line_report('line')">Line Change Report</button>
+							<?php } ?>
+							<?php if(in_array(44,$acl)) { ?>
+							<button class="btn input-sm sbtn" onclick="grid_continuous_line_report('section')">Section Change Report</button>
 							<?php } ?>
 							<?php if(in_array(45,$acl)) { ?>
 							<button class="btn input-sm sbtn" onclick="grid_continuous_ot_eot_report()">OT / EOT Report</button>
@@ -260,12 +268,12 @@
 							<?php if(in_array(46,$acl)) { ?>
 							<button class="btn input-sm sbtn" onclick="grid_continuous_costing_report()">Continuous Costing Report</button>
 							<?php } ?>
-							<?php if(in_array(47,$acl)) { ?>
+							<!-- < ?php if(in_array(47,$acl)) { ?>
 							<button class="btn input-sm sbtn" onclick="grid_continuous_report_limit(3)">Absent three</button>
-							<?php } ?>
-							<?php if(in_array(48,$acl)) { ?>
+							< ?php } ?> -->
+							<!-- < ?php if(in_array(48,$acl)) { ?>
 							<button class="btn input-sm sbtn" onclick="grid_continuous_report_limit(10)">Absent ten</button>
-							<?php } ?>
+							< ?php } ?> -->
 							<?php if(in_array(103,$acl)) { ?>
 							<button class="btn input-sm sbtn" onclick="last_increment_promotion(1)">Last Increment Check</button>
 							<?php } ?>
@@ -295,9 +303,9 @@
 
 						<!-- Other Reports -->
 						<div class="tab-pane fade" id="other">
-							<?php if(in_array(49,$acl)) { ?>
+							<!-- <?php if(in_array(49,$acl)) { ?>
 							<button class="btn input-sm sbtn" onclick="grid_app_letter()">App. Letter</button>
-							<?php } ?>
+							<?php } ?> -->
 							<?php if(in_array(50,$acl)) { ?>
 							<button class="btn input-sm sbtn" onclick="id_card(1)">ID Card Bangla</button>
 							<?php } ?>
@@ -320,6 +328,7 @@
 							<?php } ?>
 							<?php if(in_array(56,$acl)) { ?>
 							<button class="btn input-sm sbtn" onclick="grid_general_info()">General Report</button>
+							<button class="btn input-sm sbtn" onclick="grid_general_eng()">General Report(Eng)</button>
 							<?php } ?>
 
 
@@ -354,9 +363,9 @@
 							<?php } ?>
 
 
-							<?php if(in_array(65,$acl)) { ?>
+							<!-- <?php if(in_array(65,$acl)) { ?>
 							<button class="btn input-sm sbtn" onclick="grid_nominee()">Nominee From</button>
-							<?php } ?>
+							<?php } ?> -->
 							<?php if(in_array(66,$acl)) { ?>
 							<button class="btn input-sm sbtn" onclick="grid_incre_prom_report(1)">Increment Letter</button>
 							<?php } ?>
@@ -374,9 +383,9 @@
 							<button class="btn input-sm sbtn" onclick="grid_final_satalment()">Final Satalment</button>
 							<?php } ?>
 
-							<?php if(in_array(69,$acl)) { ?>
+							<!-- <?php if(in_array(69,$acl)) { ?>
 							<button class="btn input-sm sbtn" onclick="grid_age_estimation()">Age estimation</button>
-							<?php } ?>
+							<?php } ?> -->
 							<?php if(in_array(70,$acl)) { ?>
 								<!-- actual job card -->
 							<button class="btn input-sm sbtn" onclick="grid_eot_actual()">Job Card Actual </button>
@@ -394,14 +403,20 @@
 							<button class="btn input-sm sbtn" onclick="grid_extra_ot_all()">Job Card!</button>
 							<?php } ?>
 							<?php if(in_array(92,$acl)) { ?>
-                            <button class="btn input-sm sbtn" onclick="grid_maternity_benefit()">Maternity Benefit Report</button>
+                            <button class="btn input-sm sbtn" onclick="grid_maternity_benefit(1)">Maternity Benefit Report 1</button>
+                            <button class="btn input-sm sbtn" onclick="grid_maternity_benefit(2)">Maternity Benefit Report 2</button>
                             <?php } ?>
 							<?php if(in_array(124,$acl)) { ?>
                             <button class="btn input-sm sbtn" onclick="grid_service_book_info()">Service Book Information</button>
                             <?php } ?>
 						</div>
 						<!-- Other Reports end -->
-					</div>
+						 <?php if($_SESSION['data']->unit_name == 4){?>
+						 <div class="tab-pane " id="roster">
+							<button class="btn input-sm sbtn" onclick="grid_roster_employee()">Roster List</button>
+						</div>  <!-- roster list end  -->
+						<?php }?>
+					</div> 
 				</div>
 			</div>
 			<!-- button area for report section end -->
@@ -423,12 +438,12 @@
 						<?php if (!empty($employees)) {
 							foreach ($employees as $key => $emp) {
 						?>
-								<tr class="removeTr">
-									<td><input type="checkbox" class="checkbox" id="emp_id" name="emp_id[]" value="<?= $emp->emp_id ?>">
-									</td>
-									<td class="success"><?= $emp->emp_id ?></td>
-									<td class="warning "><?= $emp->name_en ?></td>
-								</tr>
+							<tr class="removeTr">
+								<td><input type="checkbox" class="checkbox" id="emp_id" name="emp_id[]" value="<?= $emp->emp_id ?>">
+								</td>
+								<td class="success"><?= $emp->emp_id ?></td>
+								<td class="warning "><?= $emp->name_en ?></td>
+							</tr>
 						<?php }
 						} ?>
 						<tr class="removeTrno">
@@ -439,6 +454,8 @@
 			</div>
 		</div>
 	</div>
+
+	<script src="<?php echo base_url(); ?>js/grid_content.js" type="text/javascript"></script>
 
 	<script>
 		$(document).ready(function() {
@@ -586,9 +603,10 @@
 						$.each(func_data, function(id, name) {
 							var opt = $('<option />');
 							opt.val(id);
-							opt.text(name);
+							opt.html(name);
 							$('.dept').append(opt);
 						});
+						changeFontBn();
 					}
 				});
 				// load employee
@@ -598,7 +616,7 @@
 	</script>
 
 	<script>
-		 function count_l1() {
+		function count_l1() {
 		    var unit = document.getElementById('unit_id').value;
 			if (unit == '') {
 				return false;
@@ -608,25 +626,78 @@
 			if (first_date == '') {
 				return false;
 			}
-			 $.ajax({
-				 type: "POST",
-				 url: hostname + "grid_con/grid_letter_count",
-				 data: {
-					 "unit_id": unit,
-					 "firstdate": first_date
-				 },
-				 success: function(data) {
+			$.ajax({
+				type: "POST",
+				url: hostname + "grid_con/grid_letter_count",
+				data: {
+					"unit_id": unit,
+					"firstdate": first_date
+				},
+				success: function(data){
 					var data = JSON.parse(data);
 					$('#letter1_count').html(data[1]);
 					$('#letter2_count').html(data[2]);
 					$('#letter3_count').html(data[3]);
-					}
-					})
 				}
+			})
+		}
 
 	</script>
 	<script>
 		$(document).ready(function() {
 			count_l1();
 		});
+		function changeFontBn() {
+			setTimeout(() => {
+				// console.log('changeFontBn');
+				$('.changeFontBn').css('font-family', 'SutonnyMJ');
+			}, 5000);
+		}
 	</script>
+
+
+<script>
+function grid_roster_employee(){
+	var ajaxRequest;  // The variable that makes Ajax possible!
+	
+	try{
+	// Opera 8.0+, Firefox, Safari
+	ajaxRequest = new XMLHttpRequest();
+	}catch (e){
+	// Internet Explorer Browsers
+	try{
+		ajaxRequest = new ActiveXObject("Msxml2.XMLHTTP");
+	}catch (e) {
+		try{
+			ajaxRequest = new ActiveXObject("Microsoft.XMLHTTP");
+		}catch (e){
+			// Something went wrong
+			alert("Your browser broke!");
+			return false;
+		}
+	}
+	}
+	var unit_id = document.getElementById('unit_id').value;
+	var first_date = document.getElementById('firstdate').value;
+	if(unit_id =='Select'){
+		alert("Please select unit !");
+		return;
+	}
+	
+	document.getElementById('loaader').style.display = 'flex';
+	var queryString="unit_id="+unit_id+"&first_date="+first_date;
+	url =  hostname+"grid_con/grid_roster_employee/";
+	ajaxRequest.open("POST", url, true);
+	ajaxRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+	ajaxRequest.send(queryString);
+	ajaxRequest.onreadystatechange = function(){
+		if (ajaxRequest.readyState == 4) {
+			document.getElementById('loaader').style.display = 'none';
+			var resp = ajaxRequest.responseText;	
+			service_book = window.open('', '_blank', 'menubar=1,resizable=1,scrollbars=1,width=1600,height=800');
+			service_book.document.write(resp);
+			service_book.stop();			
+		}
+	}
+}
+</script>

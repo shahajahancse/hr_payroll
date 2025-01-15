@@ -5,7 +5,9 @@ class Authentication extends CI_Controller {
 	function __construct()
 	{
 		parent::__construct();
-		
+		ini_set('memory_limit', -1);
+		ini_set('max_execution_time', 0);
+	    set_time_limit(0);
 		/* Standard Libraries */
 		// $this->load->model('processdb');
 		$this->load->helper('form');
