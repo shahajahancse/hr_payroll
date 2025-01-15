@@ -62,9 +62,16 @@ table.dataTable tbody td {
                     <label for="acl_name">Select Unit</label>
                     <select class="form-control input-sm" name="unit_id" id="unit_id" required>
                         <option value="">Select</option>
-                        <?php  foreach($units as $key => $value) { ?>
-                        <option value="<?= $value['unit_id'] ?>"><?= $value['unit_name'] ?></option>
-                        <?php } ?>
+                        <?php  
+                            foreach($units as $key => $value) { 
+                                if($value['unit_id'] == $_SESSION['data']->unit_name){
+                                    $selected = 'selected';
+                                }else{
+                                continue;
+                            }
+                            echo '<option ' . $select_data . '  value="' . $row->unit_id . '">' . $row->unit_name.'</option>';
+                            } 
+                        ?>
                     </select>
                 </div>
                 <div class="form-group col-md-2">
@@ -256,3 +263,4 @@ $(document).ready(function() {
 
   }
 </script>
+

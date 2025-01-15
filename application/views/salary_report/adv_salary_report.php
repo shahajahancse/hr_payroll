@@ -149,23 +149,23 @@
                 <div class="tab-content">
                     <!-- salary report  -->
                     <div class="tab-pane fade in active" id="daily">
-                        <?php if(in_array(87,$acl)) { ?>
+                        <?php if(in_array(206,$acl)) { ?>
                         <button class="btn input-sm sbtn" onclick="grid_festival_bonus()">Festival Bonus</button>
                         <?php } ?>
-                        <?php if(in_array(88,$acl)) { ?>
+                        <?php if(in_array(207,$acl)) { ?>
                         <button class="btn input-sm sbtn" onclick="grid_festival_bonus_summary()">Festival Bonus Summary</button>
                         <?php } ?>
-                        <?php if(in_array(89,$acl)) { ?>
+                        <?php if(in_array(208,$acl)) { ?>
                         <button class="btn input-sm sbtn" onclick="grid_festival_bonus_summary_sec_wise()">Festival Bonus Summary(Sec)</button>
                         <?php } ?>
-                        <?php if(in_array(90,$acl)) { ?>
+                        <?php if(in_array(209,$acl)) { ?>
                         <button class="btn input-sm sbtn" onclick="advance_salary_report()">Advance Salary Sheet</button>
                         <?php } ?>
-                        <?php if(in_array(91,$acl)) { ?>
-                        <!-- <button class="btn input-sm sbtn" onclick="grid_comprative_salary_statement()">Comparative Statement</button> -->
-                        <?php } ?>
-                        <?php if(in_array(92,$acl)) { ?>
+                        <?php if(in_array(210,$acl)) { ?>
                         <button class="btn input-sm sbtn" onclick="act_advance_salary_sheet()">Act. Adv. Sal. Sheet</button>
+                        <?php } ?>
+                        <?php if(in_array(211,$acl)) { ?>
+                        <!-- <button class="btn input-sm sbtn" onclick="grid_comprative_salary_statement()">Comparative Statement</button> -->
                         <?php } ?>
                     </div>
                     <!-- Others Benefit Report end -->

@@ -12146,62 +12146,6 @@ function service_book_info($grid_emp_id){
 
 
 
-	function grid_roster_employee($firstdate, $unit_id){
-		$this->db->select('shift_type');
-		$this->db->where('unit_id', $unit_id);
-		$query = $this->db->get('pr_emp_roster_shift');
-		if($query->num_rows() == 0){
-			return "Requested list is empty";
-		}
-		$array = array();
-		foreach ($query->result() as $key => $row) {
-			$arr = json_decode($row->shift_type);
-			$array = array_merge($array, $arr[0]);
-		}
-		$this->db->select('
-			pr_emp_com_info.emp_id,
-			pr_emp_per_info.emp_full_name, 
-			pr_designation.desig_name,
-			pr_dept.dept_name, 
-			pr_section.sec_name,
-			pr_line_num.line_name, 
-			pr_emp_com_info.emp_join_date, 
-			pr_emp_shift_schedule.shift_id,
-			pr_emp_shift_schedule.sh_type shift_name,
-			pr_emp_com_info.emp_cat_id,
-		');
-		$this->db->from('pr_emp_shift_log');
-		$this->db->from('pr_emp_com_info');
-		$this->db->from('pr_emp_shift_schedule');
-		$this->db->from('pr_emp_per_info');
-		$this->db->from('emp_designation');
-		$this->db->from('pr_dept');
-		$this->db->from('emp_section');
-		$this->db->from('emp_line_num');
-		$this->db->where('pr_emp_shift_log.shift_duty = pr_emp_shift_schedule.shift_id');
-		$this->db->where('pr_emp_shift_log.emp_id = pr_emp_com_info.emp_id');
-		$this->db->where('pr_emp_com_info.emp_id = pr_emp_per_info.emp_id');
-		$this->db->where('pr_emp_com_info.emp_desi_id = emp_designation.desig_id');
-		$this->db->where('pr_emp_com_info.emp_dept_id = pr_dept.dept_id');
-		$this->db->where('pr_emp_com_info.emp_sec_id = emp_section.sec_id');
-		$this->db->where('pr_emp_com_info.emp_line_id = emp_line_num.line_id');
-		$this->db->where_in('pr_emp_shift_log.shift_id',$array);
-		$this->db->where('pr_emp_shift_log.shift_log_date', $firstdate);
-		$this->db->order_by('pr_emp_shift_schedule.shift_id','ASC');
-		$this->db->group_by('pr_emp_shift_schedule.shift_id');
-		$this->db->group_by('pr_emp_shift_log.emp_id');
-		$query = $this->db->get()->result();
-
-		if($query)
-		{
-			return $query;
-		}
-		else
-		{
-			return "Requested list is empty";
-		}
-	}
-
 
 
 ?>
